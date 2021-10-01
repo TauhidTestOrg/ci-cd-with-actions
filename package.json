@@ -1,5 +1,5 @@
 {
-  "name": "@TauhidTestOrg/ci-cd-with-actions",
+  "name": "@tauhidtestorg/ci-cd-with-actions",
   "version": "0.1.0",
   "private": false,
   "dependencies": {
