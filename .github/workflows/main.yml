@@ -1,0 +1,70 @@
+name: Test The Latest TFE Release
+
+run-name: ${{ github.event_name == 'schedule' && 'Daily Test TFE FDO on main' || 'Test the Latest TFE Release' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: 'a test case filter, used to grep the test cases from $(make list), eg: gcp, aws, upgrade'
+        default: ''
+        required: false
+      skip_destroy:
+        description: Skip the destroy phase?
+        default: false
+        type: boolean
+  schedule:
+    - cron: '5 * * * *' # Every day at 00:00
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  list-tests:
+    name: List Test Cases
+    runs-on: ubuntu-latest
+    outputs:
+      cases: ${{steps.list-tests.outputs.cases}}
+    steps:
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
+      - name: Lists Tests
+        id: list-tests
+        working-directory: release
+        run: |
+          cases=lol
+
+          if [ ${{ github.event_name  }} == 'schedule' ]; then
+            cases=mom
+          fi
+          echo $cases
+          echo "cases=$cases" >> $GITHUB_OUTPUT
+
+  run-tests:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [list-tests]
+    strategy:
+      fail-fast: false
+      matrix:
+        case: ${{fromJson(needs.list-tests.outputs.cases)}}
+    steps:
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
+      - name: Get main branch tag
+        if: ${{ github.event_name == 'schedule' }}
+        id: main-branch-tag
+        run: |
+          tag=$(git ls-remote -q | grep refs/heads/main$ | awk '{print $1}' | xargs git rev-parse --short)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Execute Test
+        env:
+          FDO_DEVELOPMENT_IMAGE_TAG: ${{ steps.main-branch-tag.outputs.tag || '' }}
+        run: |
+          echo $FDO_DEVELOPMENT_IMAGE_TAG
+
