@@ -3,6 +3,16 @@ name: Test The Latest TFE Release
 run-name: ${{ github.event_name == 'schedule' && 'Daily Test TFE FDO on main' || 'Test the Latest TFE Release' }}
 
 on:
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: 'a test case filter, used to grep the test cases from $(make list), eg: gcp, aws, upgrade'
+        default: ''
+        required: false
+      skip_destroy:
+        description: Skip the destroy phase?
+        default: false
+        type: boolean
   schedule:
     - cron: '* * * * *' # Every day at 00:00
 
