@@ -34,10 +34,10 @@ jobs:
       - name: Lists Tests
         id: list-tests
         run: |
-          cases=lol
+          cases='["abc", "def"]'
 
           if [ ${{ github.event_name  }} == 'schedule' ]; then
-            cases=mom
+            cases='["xyz", "mnm"]'
           fi
           echo $cases
           echo "cases=$cases" >> $GITHUB_OUTPUT
