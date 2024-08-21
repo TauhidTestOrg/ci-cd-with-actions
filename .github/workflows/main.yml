@@ -33,7 +33,6 @@ jobs:
           persist-credentials: false
       - name: Lists Tests
         id: list-tests
-        working-directory: release
         run: |
           cases=lol
 
