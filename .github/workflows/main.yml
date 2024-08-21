@@ -61,9 +61,17 @@ jobs:
         run: |
           tag=$(git ls-remote -q | grep refs/heads/main$ | awk '{print $1}' | xargs git rev-parse --short)
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Get main branch tag
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        id: main-branch-tag2
+        run: |
+          tag=$(git ls-remote -q | grep refs/heads/main$ | awk '{print $1}' | xargs git rev-parse --short)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Execute Test
         env:
           FDO_DEVELOPMENT_IMAGE_TAG: ${{ steps.main-branch-tag.outputs.tag || '' }}
+          DISPATCH_TAG: ${{ steps.main-branch-tag2.outputs.tag || '' }}
         run: |
           echo $FDO_DEVELOPMENT_IMAGE_TAG
+          echo $DISPATCH_TAG
 
