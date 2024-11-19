@@ -74,7 +74,7 @@ jobs:
         run: |
           echo $FDO_DEVELOPMENT_IMAGE_TAG
           echo $DISPATCH_TAG
-      - name: Use curl to make an HTTP request
-        run: |
-          curl -X GET https://test-ip6.tauhid-anjum.aws.sbx.hashicorpdemo.com/_health_check
+      # - name: Use curl to make an HTTP request
+      #   run: |
+      #     curl -X GET https://test-ip6.tauhid-anjum.aws.sbx.hashicorpdemo.com/_health_check
 
